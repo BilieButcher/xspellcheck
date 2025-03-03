@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 
 const customDictionary = {
@@ -10,18 +10,19 @@ const customDictionary = {
 
 const SpellCheckApp = () =>  {
   
-    const [state, setState] = useState({
-      inputText: "",
-      suggestedText: "",
-    });
+    const [input, setInput] = useState({inputText: "", suggestedText: ""});
   
 
   const handleInputChange = (e) => {
     const text = e.target.value;
-    setState({...state, inputText: text });
+    setInput({...input, inputText:text});
+  }
 
     
-    const words = text.split(" ");
+  useEffect(() => {
+
+
+    const words = input.inputText.split(" ");
     const correctedWords = words.map((word) => {
       const correctedWord = customDictionary[word.toLowerCase()];
       return correctedWord || word;
@@ -33,23 +34,25 @@ const SpellCheckApp = () =>  {
     const firstCorrection = correctedWords.find(
       (word, index) => word !== words[index]
     );
-    setState({...state, suggestedText: firstCorrection || "" });
-  };
+    setInput({...input, suggestedText: firstCorrection || "" });
+
+  }, [input.inputText])
+  
 
   
     return (
       <div>
         <h1>Spell Check and Auto-Correction</h1>
         <textarea
-          value={this.state.inputText}
-          onChange={this.handleInputChange}
+          value={input.inputText}
+          onChange={(e) => {handleInputChange(e)}}
           placeholder="Enter text..."
           rows={5}
           cols={40}
         />
-        {state.suggestedText && (
+        {input.suggestedText && (
           <p>
-            Did you mean: <strong>{state.suggestedText}</strong>?
+            Did you mean: <strong>{input.suggestedText}</strong>?
           </p>
         )}
       </div>
